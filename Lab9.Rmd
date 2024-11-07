@@ -1,6 +1,6 @@
 ---
 title: "Lab9"
-author: "Your Name"
+author: "Tiana Chen"
 date: "2024-11-07"
 output: "github_document"
 ---
@@ -13,10 +13,7 @@ library(bruceR)
 library(haven)
 
 
-lab9data<-read_sav("C:/Users/Colin/Documents/lab9data.sav")
-
-
-
+lab9data<-read_sav("/Users/chenxuejing/Documents/GitHub/Lab9/lab9data.sav")
 
 
 ```
@@ -29,39 +26,55 @@ https://www.neellab.ca/uploads/1/2/1/1/121173522/the_fundamental_social_motives_
 #The traditional way is to recode your items first, then use the recoded items to test reliability
 
 lab9data$FSMI3_R <- 8 - lab9data$FSMI3
-lab9data$FSMI57_R <- 8 - lab9data$FSMI57
-lab9data$FSMI58_R <- 8 - lab9data$FSMI58
 
-#If you use the unrecoded items, it will mess up the Cronbach's alpha and lead you to draw wrong conclusion
+#If you use the unrecoded items, it will mess up the Cronbach's alpha and lead you to draw wrong conclusion, c is the specific number for the item
 
 Alpha(lab9data, "FSMI", c("1", "2", "3_R", "4", "5", "6"))
 
 #Option 2:
-#If you don't want to recode your variable, you can use the shortcut below
+#If you don't want to recode your variable, you can use the shortcut below, reversed-item is number 3,
 Alpha(lab9data, "FSMI", 1:6, rev = 3)
 
 
 ```
-# Exploratory Factor Analysis
+# Exploratory Factor Analysis (EFA)
 ```{r}
-#In factor analysis, using reverse scored items or not does not make a difference in interpretation. If you use unrecoded items, it will just make the loadings negative
+#In factor analysis, using reverse scored items or not does not make a difference in interpretation. If you use unrecoded items, it will just make the loadings negative (self-pro)
 
 EFA(lab9data, "FSMI", 1:6, rev = 3, method = "pa", plot.scree = TRUE, nfactors = c("parallel"))
-
+# it is generally good, but the factor-loading of the reversed-scored item is not above 0.4, which is not good.
 ```
 # Now test reliability for the status seeking subscale
 ```{r}
-
+lab9data$FSMI3_R <- 36 - lab9data$FSMI3
+Alpha(lab9data, "FSMI", 31:36, rev = 36)
 ```
 # Q1: What is the Cronbach's alpha of this subscale? Is it a reliable measure of status seeking? Why? 
+The Cronbach's alpha is 0.83 of this subscale. It is a reliable measure of status seeking because Cronbach's alpha that is between 0.8 and 0.9 is great enough to show the reliability.
 
 # Now run a factor analysis on the Mate Retention (Breakup Concern) subscale
 ```{r}
-
-
-
+EFA(lab9data, "FSMI", 49:54, method = "pa", plot.scree = TRUE, nfactors = c("parallel"))
 ```
 
 # Q2: How many factors can you identify from the results? Based on what? What is the range of the factor loadings? What is item that has the highest factor loading? In conclusion, is this a good measure of break up concern and why?
+There is only one factor can be identified from the results. Because on the scree plot, there is one data point that is above the parallel (simulation), and it is the only one that is larger than the Eigenvalue (1). 
+The range of the factor loadings is between 0 and 1. The item "FSMI51" has the highest factor loading that is 0.94. This measure of break up concern is good, because all the factor loadings of items are larger than 0.8 and less than 0.95 which means all the items are great to use for the factor analysis and they highly reflect a single underlying construct, which is likely the intended "breakup concern."
 
 # Q3: Pick another subscale from FSMI. Test reliability and factor analysis. Answer all the questions  above. 
+```{r}
+# test the reliability for the affiliation group subscale.
+lab9data$FSMI3_R <- 16 - lab9data$FSMI3
+Alpha(lab9data, "FSMI", 13:18, rev = 16)
+
+#test the factor analysis for 
+EFA(lab9data, "FSMI", 13:18,rev = 16, method = "pa", plot.scree = TRUE, nfactors = c("parallel"))
+
+```
+# Q: What is the Cronbach's alpha of this subscale? Is it a reliable measure of affiliation (group) subscale? Why? 
+The Cronbach's alpha is 0.836 of this subscale. It is a reliable measure of status seeking because Cronbach's alpha that is between 0.8 and 0.9 is great enough to show the reliability.
+
+# Q: How many factors can you identify from the results? Based on what? What is the range of the factor loadings? What is item that has the highest factor loading? In conclusion, is this a good measure of affiliation (group) and why?
+There is only one factor can be identified from the results. Because on the scree plot, there is one data point that is above the parallel (simulation), and it is the only one that is larger than the Eigenvalue (1). 
+The range of the factor loadings is between 0 and 1. The item "FSMI15" has the highest factor loading that is 0.854. This measure of break up concern is good, because all the factor loadings of items are larger than 0.42 and less than 0.86 which means all the items are great to use for the factor analysis and they highly reflect a single underlying construct, which is likely the intended "affiliation (group)."
+
